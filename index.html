@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="High Duo - Soluciones innovadoras para el hogar moderno. Productos de limpieza premium que transforman tu rutina diaria." />
+  <meta name="keywords" content="high duo, mopa plana, balde escurridor, productos de limpieza, hogar, argentina" />
+  <meta property="og:title" content="High Duo | Tu hogar, más inteligente" />
+  <meta property="og:description" content="Soluciones innovadoras para el hogar moderno. Calidad premium a precios accesibles." />
+  <meta property="og:image" content="assets/images/og-image.png" />
+  <meta property="og:type" content="website" />
+  <title>High Duo | Tu hogar, más inteligente</title>
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/images/apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.json" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ========================
+       HEADER / NAV
+  ========================= -->
+  <header class="header" id="header">
+    <nav class="nav container">
+      <a href="#inicio" class="nav__logo">
+        <img src="assets/images/logo.png" alt="High Duo" class="nav__logo-img" />
+      </a>
+
+      <ul class="nav__menu" id="navMenu">
+        <li><a href="#inicio" class="nav__link">Inicio</a></li>
+        <li><a href="#nosotros" class="nav__link">Nosotros</a></li>
+        <li><a href="#productos" class="nav__link">Productos</a></li>
+        <li><a href="#beneficios" class="nav__link">Beneficios</a></li>
+        <li><a href="#contacto" class="nav__link">Contacto</a></li>
+      </ul>
+
+      <a href="#productos" class="btn btn--primary nav__cta">Ver productos</a>
+
+      <button class="nav__hamburger" id="hamburger" aria-label="Abrir menú">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ========================
+       HERO
+  ========================= -->
+  <section class="hero" id="inicio">
+    <div class="hero__bg-shapes">
+      <div class="shape shape--1"></div>
+      <div class="shape shape--2"></div>
+      <div class="shape shape--3"></div>
+    </div>
+    <div class="container hero__content">
+      <div class="hero__text">
+        <span class="hero__badge">✦ Nuevo en Argentina</span>
+        <h1 class="hero__title">
+          Tu hogar,<br />
+          <span class="text-accent">más inteligente.</span><br />
+          Nosotros lo hacemos fácil.
+        </h1>
+        <p class="hero__subtitle">
+          Productos de limpieza innovadores que transforman tu rutina diaria.
+          Calidad premium, resultados reales, precio accesible.
+        </p>
+        <div class="hero__actions">
+          <a href="#productos" class="btn btn--primary btn--lg">
+            Ver productos
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+          <a href="#nosotros" class="btn btn--ghost btn--lg">Conocer más</a>
+        </div>
+        <div class="hero__stats">
+          <div class="hero__stat">
+            <span class="stat-number">⭐ 4.9</span>
+            <span class="stat-label">Calificación</span>
+          </div>
+          <div class="hero__stat-divider"></div>
+          <div class="hero__stat">
+            <span class="stat-number">🚚 24hs</span>
+            <span class="stat-label">Envío a todo el país</span>
+          </div>
+          <div class="hero__stat-divider"></div>
+          <div class="hero__stat">
+            <span class="stat-number">🛡️ 100%</span>
+            <span class="stat-label">Garantía de satisfacción</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero__visual">
+        <div class="hero__product-card">
+          <div class="product-card__image-wrapper">
+            <img src="assets/images/mopa-portada.webp" alt="Mopa Plana Premium High Duo" class="hero__product-img" />
+            <div class="product-card__badge">NUEVO</div>
+          </div>
+          <div class="product-card__info">
+            <p class="product-card__name">Mopa Plana Premium</p>
+            <p class="product-card__sub">+ Balde Escurridor Compacto · 2 Paños</p>
+          </div>
+        </div>
+        <div class="hero__floating-tag tag--1">
+          <span>🧹 Limpieza profesional</span>
+        </div>
+        <div class="hero__floating-tag tag--2">
+          <span>💧 Ultra absorbente</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero__scroll-hint">
+      <span>Scroll</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ========================
+       TRUST BAR
+  ========================= -->
+  <section class="trust-bar">
+    <div class="container trust-bar__inner">
+      <div class="trust-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+        <span>Envío gratis a todo el país</span>
+      </div>
+      <div class="trust-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+        <span>Compra 100% segura</span>
+      </div>
+      <div class="trust-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Calidad garantizada</span>
+      </div>
+      <div class="trust-item">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Atención personalizada</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================
+       NOSOTROS
+  ========================= -->
+  <section class="about" id="nosotros">
+    <div class="container about__inner">
+      <div class="about__text">
+        <span class="section-badge">Quiénes somos</span>
+        <h2 class="section-title">Soluciones reales<br />para el hogar moderno</h2>
+        <p class="about__desc">
+          En <strong>High Duo</strong> creemos que mantener tu hogar limpio y ordenado no tiene que ser una tarea difícil ni costosa.
+          Buscamos y seleccionamos los mejores productos para que puedas enfocarte en lo que realmente importa.
+        </p>
+        <p class="about__desc">
+          Nuestro catálogo está pensado para el hogar argentino moderno: práctico, accesible y con la calidad que necesitás.
+          Cada producto que ofrecemos fue elegido porque funciona de verdad.
+        </p>
+        <div class="about__values">
+          <div class="value-item">
+            <div class="value-icon">🎯</div>
+            <div>
+              <h4>Funcionalidad real</h4>
+              <p>Productos que resuelven problemas concretos del día a día.</p>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-icon">💚</div>
+            <div>
+              <h4>Confianza y transparencia</h4>
+              <p>Lo que ves es lo que recibís. Sin sorpresas.</p>
+            </div>
+          </div>
+          <div class="value-item">
+            <div class="value-icon">🚀</div>
+            <div>
+              <h4>Modernidad accesible</h4>
+              <p>Innovación al alcance de todos los hogares argentinos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="about__visual">
+        <div class="about__image-block">
+          <div class="about__img-placeholder">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="160">
+              <!-- Globe icon (brand symbol) -->
+              <circle cx="100" cy="100" r="80" fill="none" stroke="#2E7D52" stroke-width="3"/>
+              <ellipse cx="100" cy="100" rx="40" ry="80" fill="none" stroke="#2E7D52" stroke-width="2"/>
+              <line x1="20" y1="100" x2="180" y2="100" stroke="#2E7D52" stroke-width="2"/>
+              <line x1="35" y1="60" x2="165" y2="60" stroke="#2E7D52" stroke-width="1.5"/>
+              <line x1="35" y1="140" x2="165" y2="140" stroke="#2E7D52" stroke-width="1.5"/>
+              <!-- Ship -->
+              <rect x="75" y="92" width="50" height="20" rx="3" fill="#1A3C34"/>
+              <rect x="85" y="78" width="12" height="16" fill="#1A3C34"/>
+              <rect x="102" y="84" width="10" height="10" fill="#1A3C34"/>
+            </svg>
+          </div>
+          <div class="about__mission-card">
+            <p class="mission-text">"Ofrecer productos innovadores y prácticos que transformen la vida cotidiana del hogar moderno."</p>
+            <span class="mission-brand">— High Duo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================
+       PRODUCTOS
+  ========================= -->
+  <section class="products" id="productos">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Nuestros productos</span>
+        <h2 class="section-title">Elegí lo mejor<br />para tu hogar</h2>
+        <p class="section-subtitle">Cada producto fue seleccionado para hacer tu vida más fácil. Próximamente más novedades.</p>
+      </div>
+
+      <div class="products__grid">
+
+        <!-- PRODUCT CARD -->
+        <div class="product-card product-card--featured" id="mopa-plana">
+          <div class="product-card__featured-badge">⭐ Más vendido</div>
+          <div class="product-card__gallery">
+            <div class="gallery__main">
+              <img src="assets/images/mopa-portada.webp" alt="Mopa Plana Premium" class="gallery__main-img active" data-index="0" />
+              <img src="assets/images/mopa-kit.png"     alt="Kit completo"          class="gallery__main-img"        data-index="1" />
+              <img src="assets/images/mopa-cabeza.png"  alt="Cabezal de aluminio"   class="gallery__main-img"        data-index="2" />
+              <img src="assets/images/mopa-escurridores.png" alt="Doble escurridor" class="gallery__main-img"        data-index="3" />
+            </div>
+            <div class="gallery__thumbs">
+              <button class="gallery__thumb active" data-index="0">
+                <img src="assets/images/mopa-portada.webp" alt="Producto" />
+              </button>
+              <button class="gallery__thumb" data-index="1">
+                <img src="assets/images/mopa-kit.png" alt="Kit" />
+              </button>
+              <button class="gallery__thumb" data-index="2">
+                <img src="assets/images/mopa-cabeza.png" alt="Cabezal" />
+              </button>
+              <button class="gallery__thumb" data-index="3">
+                <img src="assets/images/mopa-escurridores.png" alt="Escurridor" />
+              </button>
+            </div>
+          </div>
+
+          <div class="product-card__body">
+            <div class="product-card__tags">
+              <span class="tag tag--green">Limpieza del hogar</span>
+              <span class="tag tag--outline">Nuevo</span>
+            </div>
+            <h3 class="product-card__title">Mopa Plana Premium con Balde Escurridor Compacto</h3>
+            <p class="product-card__subtitle">Kit completo · 2 Paños de microfibra incluidos</p>
+
+            <ul class="product-card__features">
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E7D52" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Sistema de escurrido compacto sin esfuerzo
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E7D52" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Rotación 360° para llegar a cualquier rincón
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E7D52" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                2 paños de microfibra ultra absorbentes incluidos
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E7D52" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Apto para todo tipo de pisos (madera, cerámico, porcelanato, mármol)
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E7D52" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Paños reutilizables y lavables a máquina
+              </li>
+              <li>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2E7D52" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                Diseño compacto: fácil de guardar y transportar
+              </li>
+            </ul>
+
+            <div class="product-card__cta-block">
+              <p class="product-cta__label">Comprá ahora a través de Mercado Libre</p>
+              <a
+                href="https://www.mercadolibre.com.ar/mopa-plana-premium-con-balde-escurridor-compacto--2-panos/up/MLAU3783597331"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn--primary btn--lg btn--full btn--ml"
+                id="buyBtn"
+              >
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                Comprar en Mercado Libre
+              </a>
+              <p class="product-cta__note">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
+                Pago 100% seguro · Envío gratis · Protección al comprador
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- COMING SOON CARD -->
+        <div class="product-card product-card--soon">
+          <div class="product-card__soon-content">
+            <div class="soon-icon">🔜</div>
+            <h3>Más productos próximamente</h3>
+            <p>Estamos seleccionando nuevos productos para vos. Seguinos para enterarte primero.</p>
+            <a href="#contacto" class="btn btn--ghost">Avisame cuando lleguen</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================
+       CARACTERÍSTICAS (FOTOS)
+  ========================= -->
+  <section class="features-photos">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Características</span>
+        <h2 class="section-title">Diseñada para<br />hacer tu vida más fácil</h2>
+      </div>
+      <div class="features-photos__grid">
+        <div class="feature-photo-card">
+          <img src="assets/images/mopa-espalda.png" alt="Fácil de limpiar - rotación 360°" />
+        </div>
+        <div class="feature-photo-card">
+          <img src="assets/images/mopa-cabezal2.png" alt="Cabezal con rebote automático" />
+        </div>
+        <div class="feature-photo-card">
+          <img src="assets/images/mopa-guardar.png" alt="Fácil de guardar - balde 14cm" />
+        </div>
+        <div class="feature-photo-card">
+          <img src="assets/images/mopa-lavar.png" alt="Fácil de lavar la mopa" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================
+       COMPARATIVA
+  ========================= -->
+  <section class="comparativa">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">¿Por qué High Duo?</span>
+        <h2 class="section-title">No es cualquier mopa</h2>
+        <p class="section-subtitle">Mirá por qué la Mopa Plana Premium de High Duo supera a los modelos tradicionales.</p>
+      </div>
+      <div class="comparativa__img-wrap">
+        <img src="assets/images/mopa-comparativa.png" alt="Comparativa High Duo vs mopa tradicional" />
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================
+       BENEFICIOS / HOW IT WORKS
+  ========================= -->
+  <section class="benefits" id="beneficios">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Por qué elegirnos</span>
+        <h2 class="section-title">Limpieza inteligente,<br />resultados reales</h2>
+      </div>
+
+      <div class="benefits__grid">
+        <div class="benefit-card">
+          <div class="benefit-card__icon">💧</div>
+          <h3>Ultra absorbente</h3>
+          <p>Los paños de microfibra atrapan polvo, líquidos y pelusas en un solo pasada, sin dejar rastros.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-card__icon">⚡</div>
+          <h3>Ahorrá tiempo y energía</h3>
+          <p>El sistema de escurrido compacto elimina el exceso de agua con un movimiento simple. Sin doblarte, sin esfuerzo.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-card__icon">♻️</div>
+          <h3>Ecológico y duradero</h3>
+          <p>Los paños son reutilizables y lavables a máquina. Menos residuos, más ahorro a largo plazo.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-card__icon">🏠</div>
+          <h3>Para todo tu hogar</h3>
+          <p>Funciona en todos los tipos de piso: madera, cerámico, porcelanato, mármol y más.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-card__icon">📦</div>
+          <h3>Envío rápido</h3>
+          <p>Llega en 24hs a todo el país a través de Mercado Libre. Seguí tu paquete en tiempo real.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-card__icon">🛡️</div>
+          <h3>Compra protegida</h3>
+          <p>Todas nuestras ventas tienen la protección de Mercado Libre. Tu satisfacción está garantizada.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================
+       TESTIMONIALS
+  ========================= -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Lo que dicen los compradores</span>
+        <h2 class="section-title">Miles de hogares<br />ya lo eligieron ⭐</h2>
+      </div>
+      <div class="testimonials__grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p>"La mejor mopa que tuve. El escurridor funciona perfecto y los paños dejan el piso impecable. Lo recomiendo a todos."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">M</div>
+            <div>
+              <strong>María G.</strong>
+              <span>Buenos Aires</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p>"Llegó rapidísimo y el producto es exactamente como se describe. El balde es compacto pero muy práctico. ¡Excelente!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">C</div>
+            <div>
+              <strong>Carlos R.</strong>
+              <span>Córdoba</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p>"Tenía mis dudas pero lo compré y no me arrepiento para nada. Los paños de microfibra son de muy buena calidad."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">L</div>
+            <div>
+              <strong>Laura P.</strong>
+              <span>Rosario</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================
+       CTA FINAL
+  ========================= -->
+  <section class="cta-section">
+    <div class="container cta-section__inner">
+      <div class="cta-section__text">
+        <h2>¿Tu cocina te lo va a agradecer? 🏡</h2>
+        <p>Sumate a los hogares que ya eligieron High Duo. El organizador que estabas buscando ya está disponible.</p>
+      </div>
+      <a
+        href="https://www.mercadolibre.com.ar/mopa-plana-premium-con-balde-escurridor-compacto--2-panos/up/MLAU3783597331"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn--white btn--lg"
+      >
+        Comprar ahora →
+      </a>
+    </div>
+  </section>
+
+  <!-- ========================
+       CONTACTO
+  ========================= -->
+  <section class="contact" id="contacto">
+    <div class="container contact__inner">
+      <div class="section-header">
+        <span class="section-badge">Contacto</span>
+        <h2 class="section-title">¿Tenés alguna pregunta?</h2>
+        <p class="section-subtitle">Escribinos y te respondemos a la brevedad. También podés contactarnos por Mercado Libre.</p>
+      </div>
+      <div class="contact__options">
+        <a href="https://www.mercadolibre.com.ar/mopa-plana-premium-con-balde-escurridor-compacto--2-panos/up/MLAU3783597331" target="_blank" rel="noopener noreferrer" class="contact-option">
+          <div class="contact-option__icon">🛒</div>
+          <h4>Mercado Libre</h4>
+          <p>Preguntá directamente en la publicación. Te respondemos en minutos.</p>
+          <span class="contact-option__link">Ir a Mercado Libre →</span>
+        </a>
+        <a href="mailto:contacto@highduo.com.ar" class="contact-option">
+          <div class="contact-option__icon">✉️</div>
+          <h4>Email</h4>
+          <p>Para consultas generales, revendedores o sugerencias de productos.</p>
+          <span class="contact-option__link">contacto@highduo.com.ar</span>
+        </a>
+        <a href="https://www.instagram.com/highduo.ar" target="_blank" rel="noopener noreferrer" class="contact-option">
+          <div class="contact-option__icon">📸</div>
+          <h4>Instagram</h4>
+          <p>Seguinos para ver novedades, tips de limpieza y próximos productos.</p>
+          <span class="contact-option__link">@highduo.ar →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================
+       FOOTER
+  ========================= -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <img src="assets/images/logo.png" alt="High Duo" class="footer__logo-img" />
+        <p>Tu hogar, más inteligente.<br />Nosotros lo hacemos fácil.</p>
+      </div>
+      <div class="footer__links">
+        <h4>Navegación</h4>
+        <ul>
+          <li><a href="#inicio">Inicio</a></li>
+          <li><a href="#nosotros">Nosotros</a></li>
+          <li><a href="#productos">Productos</a></li>
+          <li><a href="#beneficios">Beneficios</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="footer__links">
+        <h4>Tienda</h4>
+        <ul>
+          <li>
+            <a href="https://www.mercadolibre.com.ar/mopa-plana-premium-con-balde-escurridor-compacto--2-panos/up/MLAU3783597331" target="_blank" rel="noopener noreferrer">
+              Mopa Plana Premium
+            </a>
+          </li>
+          <li><a href="#productos">Próximos productos</a></li>
+        </ul>
+      </div>
+      <div class="footer__social">
+        <h4>Seguinos</h4>
+        <div class="social-links">
+          <a href="https://www.instagram.com/highduo.ar" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg>
+          </a>
+          <a href="https://www.mercadolibre.com.ar/mopa-plana-premium-con-balde-escurridor-compacto--2-panos/up/MLAU3783597331" target="_blank" rel="noopener noreferrer" aria-label="Mercado Libre">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <div class="container">
+        <p>&copy; 2025 High Duo. Todos los derechos reservados.</p>
+        <p>Hecho con 💚 para el hogar argentino</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
