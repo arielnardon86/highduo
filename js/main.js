@@ -82,6 +82,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // ── Secondary product gallery ─────────────────────────────
+  const secThumbs = document.querySelectorAll('.secondary-thumb');
+  const secImgs   = document.querySelectorAll('.secondary-img');
+
+  secThumbs.forEach(thumb => {
+    thumb.addEventListener('click', () => {
+      const idx = thumb.dataset.index;
+      secThumbs.forEach(t => t.classList.remove('active'));
+      secImgs.forEach(img => img.classList.remove('active'));
+      thumb.classList.add('active');
+      document.querySelector(`.secondary-img[data-index="${idx}"]`).classList.add('active');
+    });
+  });
+
   // ── Buy button click tracking ─────────────────────────────
   const buyBtn = document.getElementById('buyBtn');
   if (buyBtn) {
