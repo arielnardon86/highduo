@@ -68,31 +68,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
-  // ── Product image gallery ─────────────────────────────────
-  const thumbs   = document.querySelectorAll('.gallery__thumb');
-  const mainImgs = document.querySelectorAll('.gallery__main-img');
+  // ── Product image gallery (scoped per card) ───────────────
+  document.querySelectorAll('.product-card__gallery').forEach(gallery => {
+    const thumbs   = gallery.querySelectorAll('.gallery__thumb');
+    const mainImgs = gallery.querySelectorAll('.gallery__main-img');
 
-  thumbs.forEach(thumb => {
-    thumb.addEventListener('click', () => {
-      const idx = thumb.dataset.index;
-      thumbs.forEach(t   => t.classList.remove('active'));
-      mainImgs.forEach(img => img.classList.remove('active'));
-      thumb.classList.add('active');
-      document.querySelector(`.gallery__main-img[data-index="${idx}"]`).classList.add('active');
-    });
-  });
-
-  // ── Secondary product gallery ─────────────────────────────
-  const secThumbs = document.querySelectorAll('.secondary-thumb');
-  const secImgs   = document.querySelectorAll('.secondary-img');
-
-  secThumbs.forEach(thumb => {
-    thumb.addEventListener('click', () => {
-      const idx = thumb.dataset.index;
-      secThumbs.forEach(t => t.classList.remove('active'));
-      secImgs.forEach(img => img.classList.remove('active'));
-      thumb.classList.add('active');
-      document.querySelector(`.secondary-img[data-index="${idx}"]`).classList.add('active');
+    thumbs.forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        const idx = thumb.dataset.index;
+        thumbs.forEach(t   => t.classList.remove('active'));
+        mainImgs.forEach(img => img.classList.remove('active'));
+        thumb.classList.add('active');
+        gallery.querySelector(`.gallery__main-img[data-index="${idx}"]`).classList.add('active');
+      });
     });
   });
 
