@@ -76,6 +76,7 @@
   .breakdown tr.total td { font-weight: 700; color: var(--green-deep); border-top: 2px solid var(--border); }
   .w-name { min-width: 170px; }
   .w-num { min-width: 100px; }
+  [hidden] { display: none !important; }
   @media print { header .btn, .actions, .del, .noprint { display: none !important; } body { background: #fff; } .card { box-shadow: none; break-inside: avoid; } }
 </style>
 </head>
@@ -123,12 +124,12 @@
   <!-- 2. PRODUCTOS -->
   <section class="card">
     <h2><span class="n">2</span>Productos del lote</h2>
-    <p class="sub">Precio FOB unitario en USD, cantidad total y peso unitario (para el costo de envío de Mercado Libre).</p>
+    <p class="sub">Precio FOB unitario en USD, cantidad total, peso unitario (para el envío de Mercado Libre) y CBM total que ocupa cada producto en el embarque (para prorratear costos).</p>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Producto</th><th class="num">FOB unit (USD)</th><th class="num">Cantidad</th><th class="num">Peso unit (kg)</th><th class="num">FOB total (USD)</th><th class="num">% del lote</th><th></th></tr></thead>
+        <thead><tr><th>Producto</th><th class="num">FOB unit (USD)</th><th class="num">Cantidad</th><th class="num">Peso unit (kg)</th><th class="num">CBM total (m³)</th><th class="num">FOB total (USD)</th><th class="num">% FOB</th><th class="num">% CBM</th><th></th></tr></thead>
         <tbody id="tbProductos"></tbody>
-        <tfoot><tr><td>Total</td><td></td><td class="num" id="ftCant"></td><td></td><td class="num" id="ftFob"></td><td class="num">100%</td><td></td></tr></tfoot>
+        <tfoot><tr><td>Total</td><td></td><td class="num" id="ftCant"></td><td></td><td class="num" id="ftCbm"></td><td class="num" id="ftFob"></td><td class="num">100%</td><td class="num" id="ftCbmPct"></td><td></td></tr></tfoot>
       </table>
     </div>
     <div class="actions"><button class="btn" data-add="productos">+ Agregar producto</button></div>
@@ -176,10 +177,17 @@
   <!-- 6. COSTO POR PRODUCTO -->
   <section class="card">
     <h2><span class="n">6</span>Costo real por producto</h2>
-    <p class="sub">Se prorratea según el valor FOB de cada producto (FOB unit × coeficiente de importación).</p>
+    <p class="sub">Elegí cómo repartir entre los productos los costos de importación (gastos + impuestos − crédito recuperable). El FOB de cada producto es siempre el suyo.</p>
+    <div class="grid" style="margin-bottom:16px">
+      <label class="f">Prorrateo de costos
+        <select data-p="prorrateo"><option value="fob">Por valor FOB</option><option value="cbm">Por CBM (volumen)</option><option value="mix">Mix FOB + CBM</option></select>
+        <small id="prorrateoAyuda"></small></label>
+      <label class="f" id="mixWrap">Peso del CBM en el mix (%)<input type="number" step="1" min="0" max="100" data-p="mixCbm" /><small id="mixAyuda"></small></label>
+    </div>
+    <p class="note" id="prorrateoAviso" style="margin:0 0 12px" hidden></p>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Producto</th><th class="num">FOB unit (ARS)</th><th class="num">Costo real unit (ARS)</th><th class="num">Costo real unit (USD)</th><th class="num">Costo p/precio (ARS)</th><th class="num">Costo total (ARS)</th></tr></thead>
+        <thead><tr><th>Producto</th><th class="num">% asignado</th><th class="num">Coeficiente</th><th class="num">FOB unit (ARS)</th><th class="num">Costo real unit (ARS)</th><th class="num">Costo real unit (USD)</th><th class="num">Costo p/precio (ARS)</th><th class="num">Costo total (ARS)</th></tr></thead>
         <tbody id="tbCostos"></tbody>
       </table>
     </div>
@@ -250,7 +258,8 @@
         <li><b>Impuestos</b> = Σ alícuota × base, o el monto facturado si elegiste “Monto”. Base “CIF + tributos s/CIF” = CIF + impuestos con base CIF.</li>
         <li><b>Crédito recuperable</b> = suma de los impuestos tildados como deducibles.</li>
         <li><b>Costo real del lote</b> = FOB + cargo de importación + impuestos − crédito recuperable.</li>
-        <li><b>Coeficiente de importación</b> = costo real del lote ÷ FOB. Costo real unit = FOB unit (ARS) × coeficiente.</li>
+        <li><b>Coeficiente de importación</b> = costo real del lote ÷ FOB.</li>
+        <li><b>Costo real unit</b> = FOB unit (ARS) + (costo real del lote − FOB) × % asignado ÷ cantidad. El % asignado sale del valor FOB, del CBM o de una mezcla: (1 − m) × %FOB + m × %CBM. Por FOB, equivale a FOB unit × coeficiente.</li>
         <li><b>Venta</b>: precio neto = precio ÷ (1 + IVA). Comisión ML = % × precio. Debajo del umbral se descuenta el cargo por unidad del tramo; desde el umbral, el envío según peso.</li>
         <li><b>IVA de Mercado Libre</b>: comisión, cargo fijo y envío se cargan con IVA incluido; ese IVA (importe ÷ (1 + IVA) × IVA) es crédito fiscal y se descuenta del costo.</li>
         <li><b>Imp. débitos y créditos</b> = % × monto acreditado (precio − comisión − cargo/envío). Es gasto deducible de Ganancias.</li>
@@ -265,10 +274,10 @@
 (() => {
   const KEY = 'highduo-calc-importacion-v1';
   const DEFAULTS = {
-    params: { rent: 30, rentMode: 'costo', tcCompra: 1450, tcImp: 1450, tcVenta: 1450, reposicion: '1', ivaVenta: 21, ivaML: 21, idc: 0.6, gan: 35 },
+    params: { rent: 30, rentMode: 'costo', tcCompra: 1450, tcImp: 1450, tcVenta: 1450, reposicion: '1', ivaVenta: 21, ivaML: 21, idc: 0.6, gan: 35, prorrateo: 'fob', mixCbm: 50 },
     productos: [
-      { nombre: 'Producto A', fob: 2.5, cant: 1000, peso: 0.4 },
-      { nombre: 'Producto B', fob: 4.8, cant: 500, peso: 1.2 },
+      { nombre: 'Producto A', fob: 2.5, cant: 1000, peso: 0.4, cbm: 3.2 },
+      { nombre: 'Producto B', fob: 4.8, cant: 500, peso: 1.2, cbm: 4.8 },
     ],
     gastos: [
       { nombre: 'Flete internacional', monto: 1200, moneda: 'USD', cif: true },
@@ -305,6 +314,9 @@
   let S;
   try { S = JSON.parse(localStorage.getItem(KEY)) || clone(DEFAULTS); } catch { S = clone(DEFAULTS); }
   if (S.params.ivaML === undefined) S.params.ivaML = 21;
+  if (!S.params.prorrateo) S.params.prorrateo = 'fob';
+  if (S.params.mixCbm === undefined) S.params.mixCbm = 50;
+  S.productos.forEach(p => { if (p.cbm === undefined) p.cbm = 0; });
   S.impuestos.forEach(t => { if (!t.modo) t.modo = 'pct'; if (t.monto === undefined) t.monto = 0; });
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
 
@@ -327,7 +339,8 @@
       <td><input class="w-num" type="number" step="0.01" data-l="productos" data-i="${i}" data-k="fob" value="${p.fob}" /></td>
       <td><input class="w-num" type="number" step="1" data-l="productos" data-i="${i}" data-k="cant" value="${p.cant}" /></td>
       <td><input class="w-num" type="number" step="0.01" data-l="productos" data-i="${i}" data-k="peso" value="${p.peso}" /></td>
-      <td class="num" id="pFob${i}"></td><td class="num" id="pPct${i}"></td>
+      <td><input class="w-num" type="number" step="0.001" data-l="productos" data-i="${i}" data-k="cbm" value="${p.cbm}" /></td>
+      <td class="num" id="pFob${i}"></td><td class="num" id="pPct${i}"></td><td class="num" id="pCbm${i}"></td>
       <td><button class="del" data-del="productos" data-i="${i}" title="Eliminar">×</button></td></tr>`).join('');
 
     $('#tbGastos').innerHTML = S.gastos.map((g, i) => `<tr>
@@ -460,12 +473,16 @@
     const ajuste = repo ? tcV / tcC : 1;
 
     let cantT = 0;
+    const cbmT = S.productos.reduce((a, p) => a + n(p.cbm), 0);
     S.productos.forEach((p, i) => {
       const tot = n(p.fob) * n(p.cant); cantT += n(p.cant);
       $('#pFob' + i).textContent = fUSD(tot);
       $('#pPct' + i).textContent = L.fobUSD ? fPct(tot / L.fobUSD * 100) : '—';
+      $('#pCbm' + i).textContent = cbmT ? fPct(n(p.cbm) / cbmT * 100) : '—';
     });
     $('#ftCant').textContent = fNum(cantT, 0);
+    $('#ftCbm').textContent = fNum(cbmT, 3) + ' m³';
+    $('#ftCbmPct').textContent = cbmT ? '100%' : '—';
     $('#ftFob').textContent = fUSD(L.fobUSD);
     L.gastosARS.forEach((v, i) => $('#gArs' + i).textContent = fARS(v));
     $('#ftGastos').textContent = fARS(L.cargo);
@@ -482,14 +499,26 @@
       k('Costo real del lote', fARS(L.costo), tcC ? fUSD(L.costo / tcC) : '', true) +
       k('Coeficiente de importación', isFinite(L.coef) ? fNum(L.coef, 4) : '—', 'Costo real ÷ FOB', true);
 
+    const metodo = P.prorrateo || 'fob';
+    const mix = Math.min(Math.max(n(P.mixCbm), 0), 100);
+    const sinCbm = metodo !== 'fob' && cbmT <= 0;
+    const wC = sinCbm ? 0 : metodo === 'cbm' ? 1 : metodo === 'mix' ? mix / 100 : 0;
+    $('#mixWrap').hidden = metodo !== 'mix';
+    $('#mixAyuda').textContent = `${fPct(100 - mix)} por FOB · ${fPct(mix)} por CBM`;
+    $('#prorrateoAyuda').textContent = { fob: 'Proporcional al valor de cada producto', cbm: 'Proporcional al volumen que ocupa cada producto', mix: 'Combina valor y volumen' }[metodo];
+    $('#prorrateoAviso').hidden = !sinCbm;
+    $('#prorrateoAviso').innerHTML = '<span class="tag amber">Falta el CBM</span> Cargá el CBM de los productos; mientras tanto se prorratea por valor FOB.';
+    const extra = L.costo - L.fobARS;
     const rows = S.productos.map(p => {
-      const fobArs = n(p.fob) * tcC;
-      const costoU = fobArs * (isFinite(L.coef) ? L.coef : 0);
-      return { p, fobArs, costoU, costoP: costoU * ajuste };
+      const fobArs = n(p.fob) * tcC, cant = n(p.cant);
+      const sF = L.fobUSD ? n(p.fob) * cant / L.fobUSD : 0, sC = cbmT ? n(p.cbm) / cbmT : 0;
+      const share = (1 - wC) * sF + wC * sC;
+      const costoU = cant ? fobArs + extra * share / cant : 0;
+      return { p, fobArs, share, coef: fobArs ? costoU / fobArs : NaN, costoU, costoP: costoU * ajuste };
     });
 
     $('#tbCostos').innerHTML = rows.map(r => `<tr>
-      <td>${esc(r.p.nombre)}</td><td class="num">${fARS2(r.fobArs)}</td><td class="num"><b>${fARS2(r.costoU)}</b></td>
+      <td>${esc(r.p.nombre)}</td><td class="num">${fPct(r.share * 100)}</td><td class="num">${isFinite(r.coef) ? fNum(r.coef, 4) : '—'}</td><td class="num">${fARS2(r.fobArs)}</td><td class="num"><b>${fARS2(r.costoU)}</b></td>
       <td class="num">${tcC ? fUSD(r.costoU / tcC) : '—'}</td><td class="num">${fARS2(r.costoP)}</td>
       <td class="num">${fARS(r.costoU * n(r.p.cant))}</td></tr>`).join('');
 
@@ -550,7 +579,7 @@
   document.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
     if (b.dataset.add) {
-      const nuevo = { productos: { nombre: '', fob: 0, cant: 0, peso: 0 }, gastos: { nombre: '', monto: 0, moneda: 'ARS', cif: false }, impuestos: { nombre: '', modo: 'pct', monto: 0, pct: 0, base: 'cifdi', deducible: false } }[b.dataset.add];
+      const nuevo = { productos: { nombre: '', fob: 0, cant: 0, peso: 0, cbm: 0 }, gastos: { nombre: '', monto: 0, moneda: 'ARS', cif: false }, impuestos: { nombre: '', modo: 'pct', monto: 0, pct: 0, base: 'cifdi', deducible: false } }[b.dataset.add];
       S[b.dataset.add].push(nuevo); save(); renderInputs(); compute();
       const ins = document.querySelectorAll(`[data-l="${b.dataset.add}"][data-k="nombre"]`); ins[ins.length - 1]?.focus();
     } else if (b.dataset.del) {
