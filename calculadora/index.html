@@ -114,6 +114,7 @@
         <select data-p="reposicion"><option value="1">Reposición (ajustado al dólar de venta)</option><option value="0">Histórico (dólar de compra)</option></select>
         <small>Reposición = costo × dólar venta / dólar compra</small></label>
       <label class="f">IVA en la venta (%)<input type="number" step="0.1" data-p="ivaVenta" /><small>21 / 10,5 · 0 si sos monotributista</small></label>
+      <label class="f">IVA incluido en cargos de ML (%)<input type="number" step="0.1" data-p="ivaML" /><small>Comisión, envío y cargo fijo · se recupera como crédito</small></label>
       <label class="f">Imp. débitos y créditos (%)<input type="number" step="0.01" data-p="idc" /><small>Sobre lo acreditado · deducible de Ganancias</small></label>
       <label class="f">Impuesto a las Ganancias (%)<input type="number" step="0.1" data-p="gan" /><small>Sobre la ganancia neta</small></label>
     </div>
@@ -153,16 +154,16 @@
     <p class="sub">Tildá los que son deducibles (crédito fiscal o pago a cuenta recuperable): se restan del costo real.</p>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Impuesto</th><th class="num">Alícuota (%)</th><th>Base imponible</th><th class="c">Deducible</th><th class="num">Base (ARS)</th><th class="num">Importe (ARS)</th><th></th></tr></thead>
+        <thead><tr><th>Impuesto</th><th>Tipo</th><th class="num">Valor</th><th>Base imponible</th><th class="c">Deducible</th><th class="num">Base (ARS)</th><th class="num">Importe (ARS)</th><th></th></tr></thead>
         <tbody id="tbImpuestos"></tbody>
         <tfoot>
-          <tr><td>Total impuestos</td><td></td><td></td><td></td><td></td><td class="num" id="ftImp"></td><td></td></tr>
-          <tr><td>Crédito recuperable</td><td></td><td></td><td></td><td></td><td class="num" id="ftCred"></td><td></td></tr>
+          <tr><td>Total impuestos</td><td></td><td></td><td></td><td></td><td></td><td class="num" id="ftImp"></td><td></td></tr>
+          <tr><td>Crédito recuperable</td><td></td><td></td><td></td><td></td><td></td><td class="num" id="ftCred"></td><td></td></tr>
         </tfoot>
       </table>
     </div>
     <div class="actions"><button class="btn" data-add="impuestos">+ Agregar impuesto</button></div>
-    <p class="note">Valor CIF = FOB + gastos tildados como “Base CIF”, convertido al dólar de impuestos. “CIF + tributos s/CIF” suma a la base los impuestos que se calculan sobre CIF (Derecho de importación, Tasa estadística).</p>
+    <p class="note">Valor CIF = FOB + gastos tildados como “Base CIF”, convertido al dólar de impuestos. “CIF + tributos s/CIF” suma a la base los impuestos marcados con base “Valor CIF” (Derecho de importación, Tasa estadística).<br>Si no sos importador directo y te facturan un monto, elegí “Monto $” o “Monto US$” (los US$ se pasan a pesos con el dólar de compra). En esos casos la base solo indica si el importe suma a la base del IVA: dejá “Valor CIF” en Derecho de importación y Tasa estadística.</p>
   </section>
 
   <!-- 5. RESULTADO DEL LOTE -->
@@ -219,7 +220,7 @@
       <table>
         <thead><tr>
           <th>Producto</th><th class="num">Costo</th><th class="num">Precio de venta</th><th class="num">Precio USD</th><th>Modalidad</th>
-          <th class="num">Comisión ML</th><th class="num">Cargo / Envío</th><th class="num">IVA débito</th><th class="num">Imp. déb/créd</th>
+          <th class="num">Comisión ML</th><th class="num">Cargo / Envío</th><th class="num">Crédito IVA ML</th><th class="num">IVA débito</th><th class="num">Imp. déb/créd</th>
           <th class="num">Ganancias</th><th class="num">Ganancia neta</th><th class="num">Margen s/costo</th><th class="num">Margen s/precio</th>
         </tr></thead>
         <tbody id="tbPrecios"></tbody>
@@ -246,13 +247,14 @@
         <li><b>FOB</b> = Σ (FOB unit × cantidad) × dólar de compra.</li>
         <li><b>Cargo de importación</b> = suma de gastos (los cargados en USD se convierten al dólar de compra).</li>
         <li><b>Valor CIF</b> = (FOB USD + gastos tildados “Base CIF” en USD) × dólar de impuestos.</li>
-        <li><b>Impuestos</b> = Σ alícuota × base. Base “CIF + tributos s/CIF” = CIF + impuestos con base CIF.</li>
+        <li><b>Impuestos</b> = Σ alícuota × base, o el monto facturado si elegiste “Monto”. Base “CIF + tributos s/CIF” = CIF + impuestos con base CIF.</li>
         <li><b>Crédito recuperable</b> = suma de los impuestos tildados como deducibles.</li>
         <li><b>Costo real del lote</b> = FOB + cargo de importación + impuestos − crédito recuperable.</li>
         <li><b>Coeficiente de importación</b> = costo real del lote ÷ FOB. Costo real unit = FOB unit (ARS) × coeficiente.</li>
         <li><b>Venta</b>: precio neto = precio ÷ (1 + IVA). Comisión ML = % × precio. Debajo del umbral se descuenta el cargo por unidad del tramo; desde el umbral, el envío según peso.</li>
+        <li><b>IVA de Mercado Libre</b>: comisión, cargo fijo y envío se cargan con IVA incluido; ese IVA (importe ÷ (1 + IVA) × IVA) es crédito fiscal y se descuenta del costo.</li>
         <li><b>Imp. débitos y créditos</b> = % × monto acreditado (precio − comisión − cargo/envío). Es gasto deducible de Ganancias.</li>
-        <li><b>Ganancia antes de impuesto</b> = precio neto − costo − comisión − cargo/envío − imp. déb/créd. <b>Ganancias</b> = % × esa ganancia.</li>
+        <li><b>Ganancia antes de impuesto</b> = precio neto − costo − (comisión + cargo/envío sin IVA) − imp. déb/créd. <b>Ganancias</b> = % × esa ganancia.</li>
         <li><b>Ganancia neta</b> = ganancia antes de impuesto − Ganancias. El precio sugerido es el menor precio cuya ganancia neta alcanza la rentabilidad deseada.</li>
       </ul>
     </details>
@@ -263,7 +265,7 @@
 (() => {
   const KEY = 'highduo-calc-importacion-v1';
   const DEFAULTS = {
-    params: { rent: 30, rentMode: 'costo', tcCompra: 1450, tcImp: 1450, tcVenta: 1450, reposicion: '1', ivaVenta: 21, idc: 0.6, gan: 35 },
+    params: { rent: 30, rentMode: 'costo', tcCompra: 1450, tcImp: 1450, tcVenta: 1450, reposicion: '1', ivaVenta: 21, ivaML: 21, idc: 0.6, gan: 35 },
     productos: [
       { nombre: 'Producto A', fob: 2.5, cant: 1000, peso: 0.4 },
       { nombre: 'Producto B', fob: 4.8, cant: 500, peso: 1.2 },
@@ -278,13 +280,13 @@
       { nombre: 'Otros gastos', monto: 0, moneda: 'ARS', cif: false },
     ],
     impuestos: [
-      { nombre: 'Derecho de importación', pct: 20, base: 'cif', deducible: false },
-      { nombre: 'Tasa estadística', pct: 3, base: 'cif', deducible: false },
-      { nombre: 'IVA', pct: 21, base: 'cifdi', deducible: true },
-      { nombre: 'IVA adicional', pct: 20, base: 'cifdi', deducible: true },
-      { nombre: 'Ganancias (percepción)', pct: 6, base: 'cifdi', deducible: true },
-      { nombre: 'Ingresos Brutos (percepción)', pct: 2.5, base: 'cifdi', deducible: true },
-      { nombre: 'Otros impuestos', pct: 0, base: 'cifdi', deducible: false },
+      { nombre: 'Derecho de importación', modo: 'pct', monto: 0, pct: 20, base: 'cif', deducible: false },
+      { nombre: 'Tasa estadística', modo: 'pct', monto: 0, pct: 3, base: 'cif', deducible: false },
+      { nombre: 'IVA', modo: 'pct', monto: 0, pct: 21, base: 'cifdi', deducible: true },
+      { nombre: 'IVA adicional', modo: 'pct', monto: 0, pct: 20, base: 'cifdi', deducible: true },
+      { nombre: 'Ganancias (percepción)', modo: 'pct', monto: 0, pct: 6, base: 'cifdi', deducible: true },
+      { nombre: 'Ingresos Brutos (percepción)', modo: 'pct', monto: 0, pct: 2.5, base: 'cifdi', deducible: true },
+      { nombre: 'Otros impuestos', modo: 'pct', monto: 0, pct: 0, base: 'cifdi', deducible: false },
     ],
     ml: {
       comision: 14.5, umbral: 33000,
@@ -302,6 +304,8 @@
   const clone = o => JSON.parse(JSON.stringify(o));
   let S;
   try { S = JSON.parse(localStorage.getItem(KEY)) || clone(DEFAULTS); } catch { S = clone(DEFAULTS); }
+  if (S.params.ivaML === undefined) S.params.ivaML = 21;
+  S.impuestos.forEach(t => { if (!t.modo) t.modo = 'pct'; if (t.monto === undefined) t.monto = 0; });
   const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
 
   const $ = s => document.querySelector(s);
@@ -336,7 +340,11 @@
 
     $('#tbImpuestos').innerHTML = S.impuestos.map((t, i) => `<tr>
       <td><input class="w-name" data-l="impuestos" data-i="${i}" data-k="nombre" value="${esc(t.nombre)}" /></td>
-      <td><input class="w-num" type="number" step="0.01" data-l="impuestos" data-i="${i}" data-k="pct" value="${t.pct}" /></td>
+      <td><select data-l="impuestos" data-i="${i}" data-k="modo">
+        <option value="pct" ${t.modo === 'pct' ? 'selected' : ''}>%</option>
+        <option value="ars" ${t.modo === 'ars' ? 'selected' : ''}>Monto $</option>
+        <option value="usd" ${t.modo === 'usd' ? 'selected' : ''}>Monto US$</option></select></td>
+      <td><input class="w-num" type="number" step="0.01" data-l="impuestos" data-i="${i}" data-k="${t.modo === 'pct' ? 'pct' : 'monto'}" value="${t.modo === 'pct' ? t.pct : t.monto}" placeholder="${t.modo === 'pct' ? 'Alícuota %' : 'Importe'}" /></td>
       <td><select data-l="impuestos" data-i="${i}" data-k="base">
         <option value="cif" ${t.base === 'cif' ? 'selected' : ''}>Valor CIF</option>
         <option value="cifdi" ${t.base === 'cifdi' ? 'selected' : ''}>CIF + tributos s/CIF</option></select></td>
@@ -373,9 +381,10 @@
     });
     const cargo = gastosARS.reduce((a, b) => a + b, 0);
     const cif = (fobUSD + cifExtraUSD) * tcI;
-    const sobreCif = S.impuestos.filter(t => t.base === 'cif').reduce((a, t) => a + cif * n(t.pct) / 100, 0);
+    const fijo = t => t.modo === 'ars' ? n(t.monto) : t.modo === 'usd' ? n(t.monto) * tcC : null;
+    const sobreCif = S.impuestos.filter(t => t.base === 'cif').reduce((a, t) => a + (fijo(t) ?? cif * n(t.pct) / 100), 0);
     const baseDi = cif + sobreCif;
-    const imps = S.impuestos.map(t => { const base = t.base === 'cif' ? cif : baseDi; return { base, imp: base * n(t.pct) / 100 }; });
+    const imps = S.impuestos.map(t => { const base = t.base === 'cif' ? cif : baseDi, m = fijo(t); return m === null ? { base, imp: base * n(t.pct) / 100 } : { base: NaN, imp: m }; });
     const impuestos = imps.reduce((a, t) => a + t.imp, 0);
     const credito = imps.reduce((a, t, i) => a + (S.impuestos[i].deducible ? t.imp : 0), 0);
     const costo = fobARS + cargo + impuestos - credito;
@@ -396,7 +405,7 @@
   }
   // Desglose para un precio dado
   function desglose(precio, costo, peso) {
-    const P = S.params, iva = n(P.ivaVenta) / 100, c = n(S.ml.comision) / 100, t = n(P.idc) / 100, g = n(P.gan) / 100;
+    const P = S.params, iva = n(P.ivaVenta) / 100, m = n(P.ivaML) / 100, c = n(S.ml.comision) / 100, t = n(P.idc) / 100, g = n(P.gan) / 100;
     const umbral = n(S.ml.umbral);
     const gratis = umbral > 0 && precio >= umbral;
     const env = envioPorPeso(peso);
@@ -407,17 +416,20 @@
     const comision = precio * c;
     const acreditado = precio - comision - fijo - envio;
     const idc = acreditado * t;
-    const gai = neto - costo - comision - fijo - envio - idc;
+    const cargosML = comision + fijo + envio;
+    const ivaML = cargosML - cargosML / (1 + m);
+    const gai = neto - costo - (cargosML - ivaML) - idc;
     const ganancias = gai > 0 ? gai * g : 0;
     const neta = gai - ganancias;
-    return { precio, neto, ivaDeb, comision, fijo, envio, acreditado, idc, gai, ganancias, neta, gratis, excede: gratis && env.excede,
+    return { precio, neto, ivaDeb, ivaML, comision, fijo, envio, acreditado, idc, gai, ganancias, neta, gratis, excede: gratis && env.excede,
       mCosto: costo ? neta / costo * 100 : NaN, mPrecio: precio ? neta / precio * 100 : NaN };
   }
   // Menor precio que alcanza la rentabilidad deseada (solución exacta por tramos)
   function precioObjetivo(costo, peso) {
-    const P = S.params, iva = n(P.ivaVenta) / 100, c = n(S.ml.comision) / 100, t = n(P.idc) / 100, g = n(P.gan) / 100, r = n(P.rent) / 100;
+    const P = S.params, iva = n(P.ivaVenta) / 100, m = n(P.ivaML) / 100, c = n(S.ml.comision) / 100, t = n(P.idc) / 100, g = n(P.gan) / 100, r = n(P.rent) / 100;
     const umbral = n(S.ml.umbral);
-    const k = 1 / (1 + iva) - c - t * (1 - c);
+    const k = 1 / (1 + iva) - c / (1 + m) - t * (1 - c);
+    const fc = 1 / (1 + m) - t;
     // Regímenes: intervalos [lo, hi) con un costo fijo F por unidad
     const cortes = new Set([0]);
     S.ml.tramos.forEach(tr => { cortes.add(n(tr.desde)); cortes.add(n(tr.hasta)); });
@@ -428,9 +440,9 @@
     let best = Infinity;
     for (const { lo, hi, F } of regs) {
       let p;
-      // ganancia neta (si positiva) = (1-g)·(k·P − F·(1−t) − C)
-      if (P.rentMode === 'precio') { const d = (1 - g) * k - r; if (d <= 0) continue; p = (1 - g) * (F * (1 - t) + costo) / d; }
-      else { if (k <= 0) continue; p = (r * costo / (1 - g) + F * (1 - t) + costo) / k; }
+      // ganancia neta (si positiva) = (1-g)·(k·P − F·fc − C)
+      if (P.rentMode === 'precio') { const d = (1 - g) * k - r; if (d <= 0) continue; p = (1 - g) * (F * fc + costo) / d; }
+      else { if (k <= 0) continue; p = (r * costo / (1 - g) + F * fc + costo) / k; }
       if (p < lo) p = lo;
       if (p < hi && p < best) {
         // verificación (por si en el borde la ganancia no alcanza)
@@ -485,12 +497,12 @@
     $('#tbPrecios').innerHTML = rows.map(r => {
       const peso = n(r.p.peso);
       const precio = r.costoP > 0 ? precioObjetivo(r.costoP, peso) : NaN;
-      if (!isFinite(precio)) return `<tr><td>${esc(r.p.nombre)}</td><td class="num">${fARS2(r.costoP)}</td><td colspan="11"><span class="tag red">Sin solución: revisá rentabilidad, comisión e impuestos</span></td></tr>`;
+      if (!isFinite(precio)) return `<tr><td>${esc(r.p.nombre)}</td><td class="num">${fARS2(r.costoP)}</td><td colspan="12"><span class="tag red">Sin solución: revisá rentabilidad, comisión e impuestos</span></td></tr>`;
       const d = desglose(precio, r.costoP, peso);
       const mod = d.gratis ? `<span class="tag ${d.excede ? 'amber' : ''}">Envío gratis${d.excede ? ' · peso fuera de tabla' : ''}</span>` : `<span class="tag">Cargo por unidad</span>`;
       return `<tr><td>${esc(r.p.nombre)}</td><td class="num">${fARS2(r.costoP)}</td><td class="num price">${fARS2(precio)}</td>
         <td class="num">${tcV ? fUSD(precio / tcV) : '—'}</td><td>${mod}</td>
-        <td class="num">${fARS2(d.comision)}</td><td class="num">${fARS2(d.fijo + d.envio)}</td><td class="num">${fARS2(d.ivaDeb)}</td>
+        <td class="num">${fARS2(d.comision)}</td><td class="num">${fARS2(d.fijo + d.envio)}</td><td class="num">${fARS2(d.ivaML)}</td><td class="num">${fARS2(d.ivaDeb)}</td>
         <td class="num">${fARS2(d.idc)}</td><td class="num">${fARS2(d.ganancias)}</td><td class="num"><b>${fARS2(d.neta)}</b></td>
         <td class="num">${fPct(d.mCosto)}</td><td class="num">${fPct(d.mPrecio)}</td></tr>`;
     }).join('');
@@ -513,6 +525,7 @@
       line('− Costo real unitario', -r.costoP) +
       line(`− Comisión ML (${fPct(n(S.ml.comision))})`, -d.comision) +
       (d.gratis ? line('− Envío a tu cargo (por peso)' + (d.excede ? ' ⚠ peso fuera de tabla' : ''), -d.envio) : line('− Costo por unidad vendida', -d.fijo)) +
+      line(`+ Crédito IVA en cargos ML (${fPct(n(P.ivaML))} incluido)`, d.ivaML) +
       line(`− Imp. débitos y créditos (${fPct(n(P.idc))} s/ ${fARS(d.acreditado)} acreditado)`, -d.idc) +
       line('= Ganancia antes de Ganancias', d.gai, 'total') +
       line(`− Ganancias (${fPct(n(P.gan))})`, -d.ganancias) +
@@ -531,13 +544,13 @@
       item[ds.k] = el.type === 'checkbox' ? el.checked : (el.type === 'number' ? el.value : el.value);
       if (ds.l === 'productos' && ds.k === 'nombre') { const o = $('#simProd').options[+ds.i]; if (o) o.textContent = el.value; }
     } else if (el.id !== 'simPrecio') return;
-    save(); compute();
+    save(); if (ds.k === 'modo') renderInputs(); compute();
   });
   document.addEventListener('change', e => { if (e.target.matches('select, input[type=checkbox]')) e.target.dispatchEvent(new Event('input', { bubbles: true })); });
   document.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
     if (b.dataset.add) {
-      const nuevo = { productos: { nombre: '', fob: 0, cant: 0, peso: 0 }, gastos: { nombre: '', monto: 0, moneda: 'ARS', cif: false }, impuestos: { nombre: '', pct: 0, base: 'cifdi', deducible: false } }[b.dataset.add];
+      const nuevo = { productos: { nombre: '', fob: 0, cant: 0, peso: 0 }, gastos: { nombre: '', monto: 0, moneda: 'ARS', cif: false }, impuestos: { nombre: '', modo: 'pct', monto: 0, pct: 0, base: 'cifdi', deducible: false } }[b.dataset.add];
       S[b.dataset.add].push(nuevo); save(); renderInputs(); compute();
       const ins = document.querySelectorAll(`[data-l="${b.dataset.add}"][data-k="nombre"]`); ins[ins.length - 1]?.focus();
     } else if (b.dataset.del) {
