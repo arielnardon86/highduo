@@ -138,12 +138,12 @@
   <!-- 3. GASTOS -->
   <section class="card">
     <h2><span class="n">3</span>Gastos de importación</h2>
-    <p class="sub">Logística, fletes, gastos bancarios y otros. Tildá “Base CIF” en los que integran el valor en aduana (flete internacional y seguro).</p>
+    <p class="sub">Logística, fletes, gastos bancarios y otros. Tildá “Base CIF” en los que integran el valor en aduana (flete internacional y seguro). “Reparto” define cómo se asigna cada gasto a los productos en el mix automático.</p>
     <div class="tbl-wrap">
       <table>
-        <thead><tr><th>Concepto</th><th class="num">Monto</th><th>Moneda</th><th class="c">Base CIF</th><th class="num">En ARS</th><th></th></tr></thead>
+        <thead><tr><th>Concepto</th><th class="num">Monto</th><th>Moneda</th><th class="c">Base CIF</th><th>Reparto (mix auto)</th><th class="num">En ARS</th><th></th></tr></thead>
         <tbody id="tbGastos"></tbody>
-        <tfoot><tr><td>Total cargo de importación</td><td></td><td></td><td></td><td class="num" id="ftGastos"></td><td></td></tr></tfoot>
+        <tfoot><tr><td>Total cargo de importación</td><td></td><td></td><td></td><td></td><td class="num" id="ftGastos"></td><td></td></tr></tfoot>
       </table>
     </div>
     <div class="actions"><button class="btn" data-add="gastos">+ Agregar gasto</button></div>
@@ -180,11 +180,12 @@
     <p class="sub">Elegí cómo repartir entre los productos los costos de importación (gastos + impuestos − crédito recuperable). El FOB de cada producto es siempre el suyo.</p>
     <div class="grid" style="margin-bottom:16px">
       <label class="f">Prorrateo de costos
-        <select data-p="prorrateo"><option value="fob">Por valor FOB</option><option value="cbm">Por CBM (volumen)</option><option value="mix">Mix FOB + CBM</option></select>
+        <select data-p="prorrateo"><option value="auto">Mix automático (recomendado)</option><option value="fob">Por valor FOB</option><option value="cbm">Por CBM (volumen)</option><option value="mix">Mix manual (%)</option></select>
         <small id="prorrateoAyuda"></small></label>
       <label class="f" id="mixWrap">Peso del CBM en el mix (%)<input type="number" step="1" min="0" max="100" data-p="mixCbm" /><small id="mixAyuda"></small></label>
     </div>
     <p class="note" id="prorrateoAviso" style="margin:0 0 12px" hidden></p>
+    <div class="kpis" id="autoKpis" style="margin-bottom:16px"></div>
     <div class="tbl-wrap">
       <table>
         <thead><tr><th>Producto</th><th class="num">% asignado</th><th class="num">Coeficiente</th><th class="num">FOB unit (ARS)</th><th class="num">Costo real unit (ARS)</th><th class="num">Costo real unit (USD)</th><th class="num">Costo p/precio (ARS)</th><th class="num">Costo total (ARS)</th></tr></thead>
@@ -259,7 +260,7 @@
         <li><b>Crédito recuperable</b> = suma de los impuestos tildados como deducibles.</li>
         <li><b>Costo real del lote</b> = FOB + cargo de importación + impuestos − crédito recuperable.</li>
         <li><b>Coeficiente de importación</b> = costo real del lote ÷ FOB.</li>
-        <li><b>Costo real unit</b> = FOB unit (ARS) + (costo real del lote − FOB) × % asignado ÷ cantidad. El % asignado sale del valor FOB, del CBM o de una mezcla: (1 − m) × %FOB + m × %CBM. Por FOB, equivale a FOB unit × coeficiente.</li>
+        <li><b>Costo real unit</b> = FOB unit (ARS) + (costo real del lote − FOB) × % asignado ÷ cantidad. El % asignado sale del valor FOB, del CBM o de una mezcla. <b>Mix automático</b>: los gastos marcados “Por CBM” se reparten por volumen y el resto (impuestos − crédito y gastos de valor) por FOB. <b>Mix manual</b>: (1 − m) × %FOB + m × %CBM. Por FOB, equivale a FOB unit × coeficiente.</li>
         <li><b>Venta</b>: precio neto = precio ÷ (1 + IVA). Comisión ML = % × precio. Debajo del umbral se descuenta el cargo por unidad del tramo; desde el umbral, el envío según peso.</li>
         <li><b>IVA de Mercado Libre</b>: comisión, cargo fijo y envío se cargan con IVA incluido; ese IVA (importe ÷ (1 + IVA) × IVA) es crédito fiscal y se descuenta del costo.</li>
         <li><b>Imp. débitos y créditos</b> = % × monto acreditado (precio − comisión − cargo/envío). Es gasto deducible de Ganancias.</li>
@@ -274,19 +275,19 @@
 (() => {
   const KEY = 'highduo-calc-importacion-v1';
   const DEFAULTS = {
-    params: { rent: 30, rentMode: 'costo', tcCompra: 1450, tcImp: 1450, tcVenta: 1450, reposicion: '1', ivaVenta: 21, ivaML: 21, idc: 0.6, gan: 35, prorrateo: 'fob', mixCbm: 50 },
+    params: { rent: 30, rentMode: 'costo', tcCompra: 1450, tcImp: 1450, tcVenta: 1450, reposicion: '1', ivaVenta: 21, ivaML: 21, idc: 0.6, gan: 35, prorrateo: 'auto', mixCbm: 50 }, v: 3,
     productos: [
       { nombre: 'Producto A', fob: 2.5, cant: 1000, peso: 0.4, cbm: 3.2 },
       { nombre: 'Producto B', fob: 4.8, cant: 500, peso: 1.2, cbm: 4.8 },
     ],
     gastos: [
-      { nombre: 'Flete internacional', monto: 1200, moneda: 'USD', cif: true },
-      { nombre: 'Seguro', monto: 60, moneda: 'USD', cif: true },
-      { nombre: 'Despachante', monto: 450000, moneda: 'ARS', cif: false },
-      { nombre: 'Logística / depósito fiscal', monto: 380000, moneda: 'ARS', cif: false },
-      { nombre: 'Flete interno', monto: 150000, moneda: 'ARS', cif: false },
-      { nombre: 'Gastos bancarios', monto: 80, moneda: 'USD', cif: false },
-      { nombre: 'Otros gastos', monto: 0, moneda: 'ARS', cif: false },
+      { nombre: 'Flete internacional', monto: 1200, moneda: 'USD', cif: true, reparto: 'cbm' },
+      { nombre: 'Seguro', monto: 60, moneda: 'USD', cif: true, reparto: 'fob' },
+      { nombre: 'Despachante', monto: 450000, moneda: 'ARS', cif: false, reparto: 'fob' },
+      { nombre: 'Logística / depósito fiscal', monto: 380000, moneda: 'ARS', cif: false, reparto: 'cbm' },
+      { nombre: 'Flete interno', monto: 150000, moneda: 'ARS', cif: false, reparto: 'cbm' },
+      { nombre: 'Gastos bancarios', monto: 80, moneda: 'USD', cif: false, reparto: 'fob' },
+      { nombre: 'Otros gastos', monto: 0, moneda: 'ARS', cif: false, reparto: 'fob' },
     ],
     impuestos: [
       { nombre: 'Derecho de importación', modo: 'pct', monto: 0, pct: 20, base: 'cif', deducible: false },
@@ -314,7 +315,9 @@
   let S;
   try { S = JSON.parse(localStorage.getItem(KEY)) || clone(DEFAULTS); } catch { S = clone(DEFAULTS); }
   if (S.params.ivaML === undefined) S.params.ivaML = 21;
-  if (!S.params.prorrateo) S.params.prorrateo = 'fob';
+  const repartoSugerido = nombre => /flete|log[ií]stic|dep[oó]sito|almac|transporte|acarreo|contenedor|estiba|consolidad|cami[oó]n|carga/i.test(nombre || '') ? 'cbm' : 'fob';
+  if (!(S.v >= 3)) { S.params.prorrateo = 'auto'; S.v = 3; }
+  S.gastos.forEach(g => { if (!g.reparto) g.reparto = repartoSugerido(g.nombre); });
   if (S.params.mixCbm === undefined) S.params.mixCbm = 50;
   S.productos.forEach(p => { if (p.cbm === undefined) p.cbm = 0; });
   S.impuestos.forEach(t => { if (!t.modo) t.modo = 'pct'; if (t.monto === undefined) t.monto = 0; });
@@ -348,6 +351,7 @@
       <td><input class="w-num" type="number" step="0.01" data-l="gastos" data-i="${i}" data-k="monto" value="${g.monto}" /></td>
       <td><select data-l="gastos" data-i="${i}" data-k="moneda"><option ${g.moneda === 'USD' ? 'selected' : ''}>USD</option><option ${g.moneda === 'ARS' ? 'selected' : ''}>ARS</option></select></td>
       <td class="c"><input type="checkbox" data-l="gastos" data-i="${i}" data-k="cif" ${g.cif ? 'checked' : ''} /></td>
+      <td><select data-l="gastos" data-i="${i}" data-k="reparto"><option value="cbm" ${g.reparto === 'cbm' ? 'selected' : ''}>Por CBM</option><option value="fob" ${g.reparto !== 'cbm' ? 'selected' : ''}>Por FOB</option></select></td>
       <td class="num" id="gArs${i}"></td>
       <td><button class="del" data-del="gastos" data-i="${i}" title="Eliminar">×</button></td></tr>`).join('');
 
@@ -499,21 +503,28 @@
       k('Costo real del lote', fARS(L.costo), tcC ? fUSD(L.costo / tcC) : '', true) +
       k('Coeficiente de importación', isFinite(L.coef) ? fNum(L.coef, 4) : '—', 'Costo real ÷ FOB', true);
 
-    const metodo = P.prorrateo || 'fob';
+    const metodo = P.prorrateo || 'auto';
     const mix = Math.min(Math.max(n(P.mixCbm), 0), 100);
     const sinCbm = metodo !== 'fob' && cbmT <= 0;
     const wC = sinCbm ? 0 : metodo === 'cbm' ? 1 : metodo === 'mix' ? mix / 100 : 0;
+    const extraTot = L.costo - L.fobARS;
+    const poolCbm = metodo === 'auto' && !sinCbm ? L.gastosARS.reduce((a, v, i) => a + (S.gastos[i].reparto === 'cbm' ? v : 0), 0) : 0;
+    const poolFob = metodo === 'auto' ? extraTot - poolCbm : 0;
+    $('#autoKpis').hidden = metodo !== 'auto';
+    if (metodo === 'auto') $('#autoKpis').innerHTML =
+      `<div class="kpi"><div class="l">Se reparte por CBM</div><div class="v">${fARS(poolCbm)}</div><div class="s">Gastos marcados “Por CBM” (fletes, logística)</div></div>` +
+      `<div class="kpi"><div class="l">Se reparte por FOB</div><div class="v">${fARS(poolFob)}</div><div class="s">Impuestos netos de crédito y gastos de valor</div></div>`;
     $('#mixWrap').hidden = metodo !== 'mix';
     $('#mixAyuda').textContent = `${fPct(100 - mix)} por FOB · ${fPct(mix)} por CBM`;
-    $('#prorrateoAyuda').textContent = { fob: 'Proporcional al valor de cada producto', cbm: 'Proporcional al volumen que ocupa cada producto', mix: 'Combina valor y volumen' }[metodo];
+    $('#prorrateoAyuda').textContent = { auto: 'Fletes y logística por volumen; impuestos y gastos de valor por FOB', fob: 'Proporcional al valor de cada producto', cbm: 'Proporcional al volumen que ocupa cada producto', mix: 'Combina valor y volumen con el % que elijas' }[metodo];
     $('#prorrateoAviso').hidden = !sinCbm;
     $('#prorrateoAviso').innerHTML = '<span class="tag amber">Falta el CBM</span> Cargá el CBM de los productos; mientras tanto se prorratea por valor FOB.';
-    const extra = L.costo - L.fobARS;
     const rows = S.productos.map(p => {
       const fobArs = n(p.fob) * tcC, cant = n(p.cant);
       const sF = L.fobUSD ? n(p.fob) * cant / L.fobUSD : 0, sC = cbmT ? n(p.cbm) / cbmT : 0;
-      const share = (1 - wC) * sF + wC * sC;
-      const costoU = cant ? fobArs + extra * share / cant : 0;
+      const asignado = metodo === 'auto' ? poolFob * sF + poolCbm * sC : extraTot * ((1 - wC) * sF + wC * sC);
+      const share = extraTot ? asignado / extraTot : 0;
+      const costoU = cant ? fobArs + asignado / cant : 0;
       return { p, fobArs, share, coef: fobArs ? costoU / fobArs : NaN, costoU, costoP: costoU * ajuste };
     });
 
@@ -571,6 +582,8 @@
     else if (ds.l) {
       const item = list(ds.l)[+ds.i];
       item[ds.k] = el.type === 'checkbox' ? el.checked : (el.type === 'number' ? el.value : el.value);
+      if (ds.l === 'gastos' && ds.k === 'reparto') delete item.auto;
+      if (ds.l === 'gastos' && ds.k === 'nombre' && item.auto) { item.reparto = repartoSugerido(el.value); const sel = document.querySelector(`[data-l="gastos"][data-i="${ds.i}"][data-k="reparto"]`); if (sel) sel.value = item.reparto; }
       if (ds.l === 'productos' && ds.k === 'nombre') { const o = $('#simProd').options[+ds.i]; if (o) o.textContent = el.value; }
     } else if (el.id !== 'simPrecio') return;
     save(); if (ds.k === 'modo') renderInputs(); compute();
@@ -579,7 +592,7 @@
   document.addEventListener('click', e => {
     const b = e.target.closest('button'); if (!b) return;
     if (b.dataset.add) {
-      const nuevo = { productos: { nombre: '', fob: 0, cant: 0, peso: 0, cbm: 0 }, gastos: { nombre: '', monto: 0, moneda: 'ARS', cif: false }, impuestos: { nombre: '', modo: 'pct', monto: 0, pct: 0, base: 'cifdi', deducible: false } }[b.dataset.add];
+      const nuevo = { productos: { nombre: '', fob: 0, cant: 0, peso: 0, cbm: 0 }, gastos: { nombre: '', monto: 0, moneda: 'ARS', cif: false, reparto: 'fob', auto: true }, impuestos: { nombre: '', modo: 'pct', monto: 0, pct: 0, base: 'cifdi', deducible: false } }[b.dataset.add];
       S[b.dataset.add].push(nuevo); save(); renderInputs(); compute();
       const ins = document.querySelectorAll(`[data-l="${b.dataset.add}"][data-k="nombre"]`); ins[ins.length - 1]?.focus();
     } else if (b.dataset.del) {
