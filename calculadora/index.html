@@ -275,39 +275,35 @@
 (() => {
   const KEY = 'highduo-calc-importacion-v1';
   const DEFAULTS = {
-    params: { rent: 30, rentMode: 'costo', tcCompra: 1450, tcImp: 1450, tcVenta: 1450, reposicion: '1', ivaVenta: 21, ivaML: 21, idc: 0.6, gan: 35, prorrateo: 'auto', mixCbm: 50 }, v: 3,
+    // Pedido Club de Importadores (planilla Costos_e_Importacion_MercadoLibre)
+    params: { rent: 50, rentMode: 'costo', tcCompra: 1510, tcImp: 1510, tcVenta: 1510, reposicion: '1', ivaVenta: 21, ivaML: 21, idc: 0.6, gan: 35, prorrateo: 'auto', mixCbm: 50 }, v: 3,
     productos: [
-      { nombre: 'Producto A', fob: 2.5, cant: 1000, peso: 0.4, cbm: 3.2 },
-      { nombre: 'Producto B', fob: 4.8, cant: 500, peso: 1.2, cbm: 4.8 },
+      { nombre: 'Fregona reforzada (RLD-FXGGL-40-2T)', fob: 8.13, cant: 80, peso: 0, cbm: 2.342 },
+      { nombre: 'Fregona aluminio (LS-LHJ-7ZFGGL-40-2T)', fob: 7.45, cant: 120, peso: 0, cbm: 3.813 },
+      { nombre: 'Cepillo inodoro (MEY-XBMTS-TZ-BCY)', fob: 2.13, cant: 100, peso: 0, cbm: 0.35 },
+      { nombre: 'Mopa CW005 (verde)', fob: 8, cant: 126, peso: 0, cbm: 3.3 },
+      { nombre: 'Mopa SM001-32B (azul)', fob: 8, cant: 126, peso: 0, cbm: 3.1 },
+      { nombre: 'Repuesto cuadrado', fob: 0.6, cant: 120, peso: 0, cbm: 0.15 },
+      { nombre: 'Repuesto rectangular', fob: 0.6, cant: 120, peso: 0, cbm: 0.15 },
     ],
     gastos: [
-      { nombre: 'Flete internacional', monto: 1200, moneda: 'USD', cif: true, reparto: 'cbm' },
-      { nombre: 'Seguro', monto: 60, moneda: 'USD', cif: true, reparto: 'fob' },
-      { nombre: 'Despachante', monto: 450000, moneda: 'ARS', cif: false, reparto: 'fob' },
-      { nombre: 'Logística / depósito fiscal', monto: 380000, moneda: 'ARS', cif: false, reparto: 'cbm' },
-      { nombre: 'Flete interno', monto: 150000, moneda: 'ARS', cif: false, reparto: 'cbm' },
-      { nombre: 'Gastos bancarios', monto: 80, moneda: 'USD', cif: false, reparto: 'fob' },
-      { nombre: 'Otros gastos', monto: 0, moneda: 'ARS', cif: false, reparto: 'fob' },
+      { nombre: 'Flete total (servicio All In)', monto: 4620, moneda: 'USD', cif: true, reparto: 'cbm' },
+      { nombre: 'Seguro de carga', monto: 80, moneda: 'USD', cif: true, reparto: 'fob' },
     ],
     impuestos: [
-      { nombre: 'Derecho de importación', modo: 'pct', monto: 0, pct: 20, base: 'cif', deducible: false },
-      { nombre: 'Tasa estadística', modo: 'pct', monto: 0, pct: 3, base: 'cif', deducible: false },
-      { nombre: 'IVA', modo: 'pct', monto: 0, pct: 21, base: 'cifdi', deducible: true },
-      { nombre: 'IVA adicional', modo: 'pct', monto: 0, pct: 20, base: 'cifdi', deducible: true },
-      { nombre: 'Ganancias (percepción)', modo: 'pct', monto: 0, pct: 6, base: 'cifdi', deducible: true },
-      { nombre: 'Ingresos Brutos (percepción)', modo: 'pct', monto: 0, pct: 2.5, base: 'cifdi', deducible: true },
-      { nombre: 'Otros impuestos', modo: 'pct', monto: 0, pct: 0, base: 'cifdi', deducible: false },
+      { nombre: 'IVA facturado (deducible)', modo: 'usd', monto: 1585, pct: 0, base: 'cifdi', deducible: true },
+      { nombre: 'Aranceles e impuestos no deducibles', modo: 'usd', monto: 2677, pct: 0, base: 'cif', deducible: false },
     ],
     ml: {
-      comision: 14.5, umbral: 33000,
+      comision: 14.2, umbral: 33000,
       tramos: [
         { desde: 0, hasta: 15000, cargo: 1095 },
         { desde: 15000, hasta: 25000, cargo: 2190 },
         { desde: 25000, hasta: 33000, cargo: 2628 },
       ],
       envios: [
-        { hasta: 0.3, costo: 5500 }, { hasta: 0.5, costo: 6200 }, { hasta: 1, costo: 7300 },
-        { hasta: 2, costo: 8900 }, { hasta: 5, costo: 11500 },
+        { hasta: 0.5, costo: 11830 }, { hasta: 1, costo: 11830 }, { hasta: 2, costo: 11830 },
+        { hasta: 5, costo: 11830 }, { hasta: 30, costo: 11830 },
       ],
     },
   };
@@ -599,7 +595,7 @@
       S[b.dataset.del].splice(+b.dataset.i, 1); save(); renderInputs(); compute();
     }
   });
-  $('#btnReset').onclick = () => { if (confirm('¿Reiniciar todos los datos a los valores de ejemplo?')) { S = clone(DEFAULTS); save(); renderInputs(); compute(); } };
+  $('#btnReset').onclick = () => { if (confirm('¿Volver al pedido base (Club de Importadores)?')) { S = clone(DEFAULTS); save(); renderInputs(); compute(); } };
   $('#btnExport').onclick = () => {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' }));
