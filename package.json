@@ -1,0 +1,9 @@
+{
+  "name": "highduo",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "andreani": "node --env-file=.env scripts/probar-andreani.mjs"
+  }
+}

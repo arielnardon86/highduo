@@ -1,3 +1,6 @@
 .DS_Store
 tools/
 *.orig
+.env
+etiqueta-*.pdf
+node_modules/
